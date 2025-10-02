@@ -7,14 +7,19 @@ class StudentsController {
       const fields = await readDatabase(dbPath);
       const lines = ['This is the list of our students'];
 
-      const ordered = Object.keys(fields).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+      const ordered = Object.keys(fields).sort((a, b) =>
+        a.toLowerCase().localeCompare(b.toLowerCase())
+      );
+
       ordered.forEach((field) => {
-        const list = fields[field].sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+        const list = fields[field].sort((a, b) =>
+          a.toLowerCase().localeCompare(b.toLowerCase())
+        );
         lines.push(`Number of students in ${field}: ${list.length}. List: ${list.join(', ')}`);
       });
 
       res.status(200).send(lines.join('\n'));
-    } catch (e) {
+    } catch (err) {
       res.status(500).send('Cannot load the database');
     }
   }
@@ -29,9 +34,11 @@ class StudentsController {
     const dbPath = process.argv[2];
     try {
       const fields = await readDatabase(dbPath);
-      const list = (fields[major] || []).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+      const list = (fields[major] || []).sort((a, b) =>
+        a.toLowerCase().localeCompare(b.toLowerCase())
+      );
       res.status(200).send(`List: ${list.join(', ')}`);
-    } catch (e) {
+    } catch (err) {
       res.status(500).send('Cannot load the database');
     }
   }
