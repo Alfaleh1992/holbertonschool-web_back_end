@@ -2,24 +2,20 @@ import readDatabase from '../utils';
 
 class StudentsController {
   static async getAllStudents(req, res) {
-    const dbPath = process.argv[2];
+    const DB = process.argv[2];
+
     try {
-      const fields = await readDatabase(dbPath);
-      const lines = ['This is the list of our students'];
+      const fields = await readDatabase(DB);
 
-      const ordered = Object.keys(fields).sort((a, b) =>
-        a.toLowerCase().localeCompare(b.toLowerCase())
-      );
+      const out = ['This is the list of our students'];
+      // keep field order as created (insertion order), do not sort names
+      for (const key of Object.keys(fields)) {
+        const list = fields[key];
+        out.push(`Number of students in ${key}: ${list.length}. List: ${list.join(', ')}`);
+      }
 
-      ordered.forEach((field) => {
-        const list = fields[field].sort((a, b) =>
-          a.toLowerCase().localeCompare(b.toLowerCase())
-        );
-        lines.push(`Number of students in ${field}: ${list.length}. List: ${list.join(', ')}`);
-      });
-
-      res.status(200).send(lines.join('\n'));
-    } catch (err) {
+      res.status(200).send(out.join('\n'));
+    } catch (_e) {
       res.status(500).send('Cannot load the database');
     }
   }
@@ -31,14 +27,13 @@ class StudentsController {
       return;
     }
 
-    const dbPath = process.argv[2];
+    const DB = process.argv[2];
+
     try {
-      const fields = await readDatabase(dbPath);
-      const list = (fields[major] || []).sort((a, b) =>
-        a.toLowerCase().localeCompare(b.toLowerCase())
-      );
+      const fields = await readDatabase(DB);
+      const list = fields[major] || []; // preserve CSV order
       res.status(200).send(`List: ${list.join(', ')}`);
-    } catch (err) {
+    } catch (_e) {
       res.status(500).send('Cannot load the database');
     }
   }
